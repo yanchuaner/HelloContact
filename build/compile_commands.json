@@ -1,0 +1,14 @@
+[
+{
+  "directory": "C:/Users/lucky dog/Desktop/manager/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -DWINVER=0x0A00 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN32_WINNT=0x0A00 -D_WIN64 @CMakeFiles/manager.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\manager.dir\\manager_autogen\\mocs_compilation.cpp.obj -c \"C:\\Users\\lucky dog\\Desktop\\manager\\build\\manager_autogen\\mocs_compilation.cpp\"",
+  "file": "C:/Users/lucky dog/Desktop/manager/build/manager_autogen/mocs_compilation.cpp",
+  "output": "CMakeFiles/manager.dir/manager_autogen/mocs_compilation.cpp.obj"
+},
+{
+  "directory": "C:/Users/lucky dog/Desktop/manager/build",
+  "command": "C:\\msys64\\mingw64\\bin\\g++.exe -DMINGW_HAS_SECURE_API=1 -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_WIDGETS_LIB -DUNICODE -DWIN32 -DWIN64 -DWINVER=0x0A00 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -D_UNICODE -D_WIN32_WINNT=0x0A00 -D_WIN64 @CMakeFiles/manager.dir/includes_CXX.rsp -g -std=gnu++17 -o CMakeFiles\\manager.dir\\MainWindow.cpp.obj -c \"C:\\Users\\lucky dog\\Desktop\\manager\\MainWindow.cpp\"",
+  "file": "C:/Users/lucky dog/Desktop/manager/MainWindow.cpp",
+  "output": "CMakeFiles/manager.dir/MainWindow.cpp.obj"
+}
+]

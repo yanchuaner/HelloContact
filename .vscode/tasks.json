@@ -1,0 +1,63 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "g++: build manager.exe (Qt6)",
+            "command": "g++.exe",
+            "args": [
+                "-std=c++17",
+                "-fPIC",
+                "-I${workspaceFolder}",
+                "-c",
+                "${workspaceFolder}/MainWindow.cpp",
+                "-o",
+                "${workspaceFolder}/MainWindow.o"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "group": "build",
+            "detail": "Step 1: Compile MainWindow.cpp (run 'moc + link' task after this)"
+        },
+        {
+            "type": "shell",
+            "label": "CMake: configure + build",
+            "command": "C:\\cmake\\bin\\cmake.exe",
+            "args": [
+                "-B",
+                "${workspaceFolder}/build",
+                "-G",
+                "MinGW Makefiles",
+                "-DCMAKE_PREFIX_PATH=C:/msys64/mingw64",
+                "-DCMAKE_CXX_COMPILER=g++.exe",
+                "${workspaceFolder}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "CMake configure + generate build files (run once, then use 'CMake: build' below)"
+        },
+        {
+            "type": "shell",
+            "label": "CMake: build",
+            "command": "C:\\cmake\\bin\\cmake.exe",
+            "args": [
+                "--build",
+                "${workspaceFolder}/build"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "group": "build",
+            "detail": "Build using existing CMake build directory"
+        }
+    ]
+}

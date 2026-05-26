@@ -1,5 +1,18 @@
 {
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
-    "editor.formatOnType": true
+    "editor.formatOnType": true,
+    "code-runner.saveFileBeforeRun": true,
+    "code-runner.executorMap": {
+        "cpp": "cd $dir && g++ -std=c++17 $fileName -o $fileNameWithoutExt.exe && .\\$fileNameWithoutExt.exe"
+    },
+    "cmake.environment": {
+        "PATH": "${env:PATH};C:\\msys64\\mingw64\\bin"
+    },
+    "cmake.launchTargetDirectory": "${workspaceFolder}",
+    "cmake.cmakePath": "C:\\cmake\\bin\\cmake.exe",
+    "cmake.generator": "MinGW Makefiles",
+    "cmake.configureSettings": {
+        "CMAKE_PREFIX_PATH": "C:/msys64/mingw64"
+    }
 }
