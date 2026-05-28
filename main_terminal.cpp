@@ -17,6 +17,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
+#include <filesystem>
 
 // ==========================================
 // Date 结构体
@@ -339,7 +340,8 @@ class AddressBookManager {
         filename += receiverName;
         filename += ".txt";
 
-        std::ofstream out(filename);
+        auto filepath = std::filesystem::u8path(filename);
+        std::ofstream out(filepath);
         if (out.is_open()) {
             out << receiverName << ":\n";
             out << "\t祝生日快乐，健康幸福。\n";
@@ -348,7 +350,7 @@ class AddressBookManager {
 
             std::cout << "已为 " << receiverName << " 生成祝福邮件: " << filename << std::endl;
             std::cout << "── 邮件内容 ──" << std::endl;
-            std::ifstream infile(filename);
+            std::ifstream infile(filepath);
             std::string line;
             while (std::getline(infile, line))
                 std::cout << line << std::endl;
@@ -500,7 +502,7 @@ static const char *typeName(int t) {
 static void showMenu() {
     std::cout << "\n"
               << "╔══════════════════════════════╗\n"
-              << "║    个人通信录管理系统         ║\n"
+              << "║    个人通信录管理系统        ║\n"
               << "╠══════════════════════════════╣\n"
               << "║ 1. 添加联系人                ║\n"
               << "║ 2. 删除联系人                ║\n"
