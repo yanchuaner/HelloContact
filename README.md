@@ -173,17 +173,34 @@ manager/
 
 所有业务方法通过 `std::cout` 输出，UI 层通过 `captureStdout` 重定向到日志面板，后端无侵入。
 
-### 终端版交互
+### 终端版 (`main_terminal.cpp`) 详解
 
-```
-main_terminal.cpp
-  └→ 菜单循环（数字选择）→ AddressBookManager 方法 → cout 输出
-```
-
-终端版不依赖 Qt 和 LLM，编译只需一行命令：
+`main_terminal.cpp` 是系统中**剥离了 Qt 和 LLM 大模型**的纯 C++17 独立实现文件，适用于无 GUI 环境、答辩演示或快速核心逻辑验证。编译该文件无需配置复杂的系统环境：
 
 ```bash
-g++ -std=c++17 main_terminal.cpp -o terminal.exe
+g++ -std=c++17 main_terminal.cpp -o main_terminal.exe
+```
+
+**设计亮点与重构优化：**
+
+1. **零外部依赖：** 使用 `<iostream>`、`<vector>`、`<fstream>` 等纯标准库实现，跨平台兼容性极强。
+2. **面向对象与多态：** 基于抽象基类 `Person` 构建了 `Classmate`、`Colleague` 等子类，通过虚函数实现多态展显 (`display`) 和格式化存取 (`formatForFile`)。
+3. **简单工厂模式 (Factory Pattern)：** 
+   使用静态工厂类 `PersonFactory` 统一管理联系人层级的实例化逻辑。将庞大的 `switch-case` 逻辑从按行读取解析 (`loadFromFile`) 和键盘输入 (`inputPerson`) 的过程中解耦出来，极大遵守了“开闭原则”。
+4. **RAII 内存管理：** 核心数据结构使用 `std::vector<std::unique_ptr<Person>>`，告别内存泄漏困扰，指针生命周期全自动管理。
+5. **健壮的容错机制 (Robustness)：** 
+   在文本反序列化（例如将 CSV 字符 `std::stoi` 转为数字）时加入了完整的 `try-catch` 异常处理；当某行数据遭破坏时（如非法逗号或非数字字符），程序将输出警告并自动跳过，保障主库数据不受影响，杜绝系统崩溃。
+6. **交互循环体验优化：** 对缓冲区的残余换行符读取进行了严谨的清空规避，并在暂停继续 `pauseAndContinue()` 的逻辑中进行了独立终端的底层优化，防止因为缓冲池意外而引起的阻塞卡顿现象。
+
+**终端基本操作循环：**
+```
+启动时 loadFromFile() 
+  ↓
+显示菜单 showMenu() ↔ 接收指令 inputInt()
+  ↓
+调用 AddressBookManager 进行查找/修改排序等操作
+  ↓
+退出时 saveToFile() 统一落盘
 ```
 
 ### AI 映射表
