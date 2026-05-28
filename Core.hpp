@@ -13,10 +13,8 @@
 #include <string_view>
 #include <vector>
 
-#if __has_include(<QFile>)
 #include <QFile>
 #include <QTextStream>
-#endif
 
 // ==========================================
 // 1. 日期结构体
@@ -348,7 +346,6 @@ class AddressBookManager {
     }
 
     // ========== 生日检查与祝福邮件 ==========
-#if __has_include(<QFile>)
     std::string generateBirthdayEmail(std::string_view receiverName,
                                       std::string_view myName) const {
         QString fn = QStringLiteral("BirthdayEmail_%1.txt")
@@ -387,33 +384,6 @@ class AddressBookManager {
         }
         return filename;
     }
-#else
-    std::string generateBirthdayEmail(std::string_view receiverName,
-                                      std::string_view myName) const {
-        std::string filename = "BirthdayEmail_";
-        filename += receiverName;
-        filename += ".txt";
-
-        std::ofstream out(filename);
-        if (out.is_open()) {
-            out << receiverName << ":\n";
-            out << "\t祝生日快乐，健康幸福。\n";
-            out << "\t\t\t\t\t\t" << myName << "\n";
-            out.close();
-
-            std::cout << "已为 " << receiverName << " 生成祝福邮件: " << filename << std::endl;
-            std::cout << "── 邮件内容 ──" << std::endl;
-            std::ifstream infile(filename);
-            std::string line;
-            while (std::getline(infile, line))
-                std::cout << line << std::endl;
-            std::cout << "──────────────" << std::endl;
-        } else {
-            std::cout << "!! 生成祝福邮件失败：无法写入文件 " << filename << std::endl;
-        }
-        return filename;
-    }
-#endif
 
     void checkBirthdaysAndSendEmails(std::string_view myName) const {
         bool foundAny = false;
