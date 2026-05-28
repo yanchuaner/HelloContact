@@ -1,5 +1,0 @@
-C:/Users/lucky dog/Desktop/manager/build/CMakeFiles/manager.dir
-C:/Users/lucky dog/Desktop/manager/build/CMakeFiles/edit_cache.dir
-C:/Users/lucky dog/Desktop/manager/build/CMakeFiles/rebuild_cache.dir
-C:/Users/lucky dog/Desktop/manager/build/CMakeFiles/manager_autogen_timestamp_deps.dir
-C:/Users/lucky dog/Desktop/manager/build/CMakeFiles/manager_autogen.dir

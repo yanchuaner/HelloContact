@@ -1,3 +1,0 @@
-C:\cmake\bin\cmake.exe -E rm -f CMakeFiles\manager.dir/objects.a
-C:\msys64\mingw64\bin\ar.exe qc CMakeFiles\manager.dir/objects.a @CMakeFiles\manager.dir\objects1.rsp
-C:\msys64\mingw64\bin\g++.exe -g -Wl,--whole-archive CMakeFiles\manager.dir/objects.a -Wl,--no-whole-archive -o manager.exe -Wl,--out-implib,libmanager.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\manager.dir\linkLibs.rsp
