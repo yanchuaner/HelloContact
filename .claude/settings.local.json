@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -rf \"C:/Users/lucky dog/.ssh/\"* \"C:/Users/lucky dog/.ssh/\".*)",
+      "Read(//c/Users/lucky dog/.ssh/**)"
+    ]
+  }
+}

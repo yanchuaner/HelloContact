@@ -151,6 +151,27 @@ class Relative : public Person {
 };
 
 // ==========================================
+// PersonFactory (工厂模式)
+// ==========================================
+class PersonFactory {
+  public:
+    static std::unique_ptr<Person> create(int type, const std::string &n, Date d, const std::string &p, const std::string &e, const std::string &extra) {
+        switch (type) {
+        case 1:
+            return std::make_unique<Classmate>(n, d, p, e, extra);
+        case 2:
+            return std::make_unique<Colleague>(n, d, p, e, extra);
+        case 3:
+            return std::make_unique<Friend>(n, d, p, e, extra);
+        case 4:
+            return std::make_unique<Relative>(n, d, p, e, extra);
+        default:
+            return nullptr;
+        }
+    }
+};
+
+// ==========================================
 // AddressBookManager
 // ==========================================
 class AddressBookManager {
@@ -406,20 +427,13 @@ class AddressBookManager {
                     tokens.push_back(token);
 
                 if (tokens.size() >= 7) {
-                    Date d = {std::stoi(tokens[1]), std::stoi(tokens[2]), std::stoi(tokens[3])};
-                    switch (type) {
-                    case 1:
-                        addPerson(std::make_unique<Classmate>(tokens[0], d, tokens[4], tokens[5], tokens[6]));
-                        break;
-                    case 2:
-                        addPerson(std::make_unique<Colleague>(tokens[0], d, tokens[4], tokens[5], tokens[6]));
-                        break;
-                    case 3:
-                        addPerson(std::make_unique<Friend>(tokens[0], d, tokens[4], tokens[5], tokens[6]));
-                        break;
-                    case 4:
-                        addPerson(std::make_unique<Relative>(tokens[0], d, tokens[4], tokens[5], tokens[6]));
-                        break;
+                    try {
+                        Date d = {std::stoi(tokens[1]), std::stoi(tokens[2]), std::stoi(tokens[3])};
+                        if (auto p = PersonFactory::create(type, tokens[0], d, tokens[4], tokens[5], tokens[6])) {
+                            addPerson(std::move(p));
+                        }
+                    } catch (const std::exception &e) {
+                        std::cerr << "!! 警告：联系人数据解析失败 (可能是数值损坏)，已跳过该行: " << tokens[0] << std::endl;
                     }
                 }
             }
@@ -434,8 +448,8 @@ class AddressBookManager {
 // ===============================================================
 static void pauseAndContinue() {
     std::cout << "\n按 Enter 键继续...";
-    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-    std::cin.get();
+    std::string dummy;
+    std::getline(std::cin, dummy);
 }
 
 static int inputInt(const std::string &prompt, int minVal, int maxVal) {
@@ -518,18 +532,7 @@ static std::unique_ptr<Person> inputPerson() {
     const char *extraPrompts[] = {"学校: ", "单位: ", "地点: ", "称呼: "};
     std::string extra = inputStr(extraPrompts[typeIdx - 1]);
 
-    switch (typeIdx) {
-    case 1:
-        return std::make_unique<Classmate>(name, d, phone, email, extra);
-    case 2:
-        return std::make_unique<Colleague>(name, d, phone, email, extra);
-    case 3:
-        return std::make_unique<Friend>(name, d, phone, email, extra);
-    case 4:
-        return std::make_unique<Relative>(name, d, phone, email, extra);
-    default:
-        return nullptr;
-    }
+    return PersonFactory::create(typeIdx, name, d, phone, email, extra);
 }
 
 // ===============================================================
