@@ -1,12 +1,17 @@
 @echo off
 REM Build script for HelloContact (Windows/MinGW)
 REM Usage: scripts\build.bat [target]
+REM
+REM Environment variables (optional):
+REM   CMAKE_PREFIX_PATH  — Path to Qt6 installation (default: C:/msys64/mingw64)
+REM   BUILD_DIR          — Build output directory (default: build)
 
 setlocal enabledelayedexpansion
 
-set "BUILD_DIR=build"
+set "BUILD_DIR=%BUILD_DIR:build%"
+if "%BUILD_DIR%"=="" set "BUILD_DIR=build"
 set "CMAKE_GENERATOR=MinGW Makefiles"
-set "CMAKE_PREFIX_PATH=C:/msys64/mingw64"
+if "%CMAKE_PREFIX_PATH%"=="" set "CMAKE_PREFIX_PATH=C:/msys64/mingw64"
 
 if "%1"=="clean" (
     if exist "%BUILD_DIR%" (

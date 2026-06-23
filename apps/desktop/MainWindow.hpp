@@ -21,9 +21,9 @@
 
 #include "hello_contact/core.hpp"
 
-// ── LLM API 配置 ──
+// ── LLM API 配置（通过环境变量注入，切勿硬编码） ──
 #ifndef LLM_API_KEY
-#define LLM_API_KEY "sk-7fb9d6c623194cca84b725c2211a424a"
+#define LLM_API_KEY ""
 #endif
 #ifndef LLM_API_URL
 #define LLM_API_URL "https://api.deepseek.com/v1/chat/completions"
@@ -143,7 +143,7 @@ private:
 
     // 用户设置
     QString m_senderName = "Admin";
-    QString m_emailPath = ".";
+    QString m_emailPath = "data";
 };
 
 // ── 数据可视化图表对话框 ──

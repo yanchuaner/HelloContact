@@ -3,14 +3,14 @@
     "tasks": [
         {
             "type": "shell",
-            "label": "CMake: configure (MinGW)",
+            "label": "CMake: configure (MinGW, full build)",
             "command": "C:\\cmake\\bin\\cmake.exe",
             "args": [
                 "-B",
                 "${workspaceFolder}/build",
                 "-G",
                 "MinGW Makefiles",
-                "-DCMAKE_PREFIX_PATH=C:/msys64/mingw64",
+                "-DCMAKE_PREFIX_PATH=${env:CMAKE_PREFIX_PATH:-C:/msys64/mingw64}",
                 "-DCMAKE_CXX_COMPILER=g++.exe",
                 "-DHELLO_CONTACT_BUILD_DESKTOP=ON",
                 "${workspaceFolder}"
@@ -23,7 +23,28 @@
                 "cwd": "${workspaceFolder}"
             },
             "problemMatcher": ["$gcc"],
-            "detail": "CMake configure for HelloContact (run once)"
+            "detail": "CMake configure for HelloContact (terminal + desktop)"
+        },
+        {
+            "type": "shell",
+            "label": "CMake: configure (terminal only)",
+            "command": "C:\\cmake\\bin\\cmake.exe",
+            "args": [
+                "-B",
+                "${workspaceFolder}/build",
+                "-G",
+                "MinGW Makefiles",
+                "-DCMAKE_PREFIX_PATH=${env:CMAKE_PREFIX_PATH:-C:/msys64/mingw64}",
+                "-DCMAKE_CXX_COMPILER=g++.exe",
+                "-DHELLO_CONTACT_BUILD_DESKTOP=OFF",
+                "${workspaceFolder}"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": ["$gcc"],
+            "group": "build",
+            "detail": "Terminal-only build (no Qt dependency)"
         },
         {
             "type": "shell",
@@ -38,27 +59,7 @@
             },
             "problemMatcher": ["$gcc"],
             "group": "build",
-            "detail": "Build HelloContact using existing CMake build directory"
-        },
-        {
-            "type": "shell",
-            "label": "CMake: build terminal only",
-            "command": "C:\\cmake\\bin\\cmake.exe",
-            "args": [
-                "-B",
-                "${workspaceFolder}/build",
-                "-G",
-                "MinGW Makefiles",
-                "-DCMAKE_PREFIX_PATH=C:/msys64/mingw64",
-                "-DHELLO_CONTACT_BUILD_DESKTOP=OFF",
-                "${workspaceFolder}"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": ["$gcc"],
-            "group": "build",
-            "detail": "Terminal-only build (no Qt dependency)"
+            "detail": "Build using existing CMake build directory"
         }
     ]
 }

@@ -44,7 +44,8 @@ if (-not (Test-Path "$buildDir\Makefile")) {
     New-Item -ItemType Directory -Force -Path $buildDir | Out-Null
     Push-Location $buildDir
     try {
-        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=C:/msys64/mingw64
+        $qtPath = if ($env:CMAKE_PREFIX_PATH) { $env:CMAKE_PREFIX_PATH } else { "C:/msys64/mingw64" }
+        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$qtPath"
         if ($LASTEXITCODE -ne 0) { throw "cmake configure failed" }
     } finally {
         Pop-Location

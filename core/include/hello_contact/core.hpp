@@ -365,7 +365,7 @@ class AddressBookManager {
     // ========== 生日检查与祝福邮件 ==========
     std::string generateBirthdayEmail(std::string_view receiverName,
                                       std::string_view myName,
-                                      std::string_view saveDir = ".") const {
+                                      std::string_view saveDir = "data") const {
         std::string filename;
         if (saveDir != "." && !saveDir.empty()) {
             filename = std::string(saveDir) + "/";
@@ -448,7 +448,7 @@ class AddressBookManager {
     // ==========================================
     void saveToFile() {
         for (int type = 1; type <= 4; ++type) {
-            std::string filename = "AddressBook" + std::to_string(type) + ".txt";
+            std::string filename = "data/AddressBook" + std::to_string(type) + ".txt";
             std::ofstream out(filename);
             if (!out.is_open()) {
                 std::cerr << "无法打开文件写入：" << filename << std::endl;
@@ -467,8 +467,13 @@ class AddressBookManager {
         contacts.clear();
 
         for (int type = 1; type <= 4; ++type) {
-            std::string filename = "AddressBook" + std::to_string(type) + ".txt";
+            // 优先读取 data/ 目录，fallback 到根目录（兼容旧版）
+            std::string filename = "data/AddressBook" + std::to_string(type) + ".txt";
             std::ifstream in(filename);
+            if (!in.is_open()) {
+                filename = "AddressBook" + std::to_string(type) + ".txt";
+                in.open(filename);
+            }
             if (!in.is_open())
                 continue;
 
