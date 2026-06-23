@@ -1,16 +1,32 @@
 cmake_minimum_required(VERSION 3.16)
-project(AddressBook VERSION 2.0 LANGUAGES CXX)
+project(HelloContact VERSION 2.0 LANGUAGES CXX)
 
+# ── C++ 标准 ──
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Network)
+# ── 构建选项 ──
+option(HELLO_CONTACT_BUILD_TERMINAL "Build terminal version" ON)
+option(HELLO_CONTACT_BUILD_DESKTOP  "Build Qt desktop version" ON)
+option(HELLO_CONTACT_BUILD_TESTS    "Build unit tests" ON)
+option(HELLO_CONTACT_BUILD_LLM      "Build LLM module" OFF)
 
-add_executable(manager
-    MainWindow.hpp
-    MainWindow.cpp
-    Core.hpp
-)
-target_link_libraries(manager PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network)
-target_include_directories(manager PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+# ── 子目录 ──
+add_subdirectory(core)
+
+if(HELLO_CONTACT_BUILD_TERMINAL)
+    add_subdirectory(apps/terminal)
+endif()
+
+if(HELLO_CONTACT_BUILD_DESKTOP)
+    find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Network)
+    add_subdirectory(apps/desktop)
+endif()
+
+if(HELLO_CONTACT_BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
+
+if(HELLO_CONTACT_BUILD_LLM)
+    add_subdirectory(llm)
+endif()

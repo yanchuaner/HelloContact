@@ -1,5 +1,5 @@
-#ifndef MANAGER_MAINWINDOW_HPP
-#define MANAGER_MAINWINDOW_HPP
+#ifndef HELLO_CONTACT_MAINWINDOW_HPP
+#define HELLO_CONTACT_MAINWINDOW_HPP
 
 #include <QDialog>
 #include <QComboBox>
@@ -8,14 +8,18 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMainWindow>
+#include <QMenu>
 #include <QNetworkAccessManager>
+#include <QPainter>
 #include <QPushButton>
+#include <QShortcut>
 #include <QSpinBox>
 #include <QStackedWidget>
+#include <QStatusBar>
 #include <QTableWidget>
 #include <QTextEdit>
 
-#include "Core.hpp"
+#include "hello_contact/core.hpp"
 
 // ── LLM API 配置 ──
 #ifndef LLM_API_KEY
@@ -100,18 +104,65 @@ private slots:
     void onSave();
     void onAiSend();
     void onAiCommand(const QJsonObject &cmd);
+    void onHeaderClicked(int section);
+    void onTableContextMenu(const QPoint &pos);
+    void onThemeToggle();
 
 private:
     void refreshTable();
+    void updateStatusBar();
     void appendLog(const QString &msg);
+    void saveUndoSnapshot(const QString &action, const QString &name,
+                          const QString &snapshot = "");
 
     AddressBookManager manager;
     QTableWidget *table;
     QTextEdit *log;
-    QSpinBox     *monthSpin;
     QLineEdit    *aiInput;
     QPushButton  *aiSendBtn;
+    QLineEdit    *quickSearch = nullptr;
+    QComboBox    *monthCombo = nullptr;
+    QPushButton  *m_sortNameBtn = nullptr;
+    QPushButton  *m_sortBirthBtn = nullptr;
     LLMAssistant *m_llm;
+
+    // 排序
+    bool m_sortNameAsc  = true;
+    bool m_sortBirthAsc = true;
+
+    // 主题
+    bool    m_darkTheme = true;
+    QString m_darkQSS;
+    QString m_lightQSS;
+
+    // 撤销
+    enum class LastAction { None, Add, Delete, Edit };
+    LastAction m_lastAction   = LastAction::None;
+    QString    m_lastTarget;
+    QString    m_undoSnapshot;
+
+    // 用户设置
+    QString m_senderName = "Admin";
+    QString m_emailPath = ".";
 };
 
-#endif // MANAGER_MAINWINDOW_HPP
+// ── 数据可视化图表对话框 ──
+class ChartWidget : public QWidget {
+    Q_OBJECT
+public:
+    explicit ChartWidget(const std::vector<std::unique_ptr<Person>> &contacts,
+                         QWidget *parent = nullptr);
+protected:
+    void paintEvent(QPaintEvent *event) override;
+private:
+    const std::vector<std::unique_ptr<Person>> &m_contacts;
+};
+
+class ChartDialog : public QDialog {
+    Q_OBJECT
+public:
+    explicit ChartDialog(const std::vector<std::unique_ptr<Person>> &contacts,
+                         QWidget *parent = nullptr);
+};
+
+#endif // HELLO_CONTACT_MAINWINDOW_HPP

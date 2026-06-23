@@ -1,5 +1,5 @@
-#ifndef MANAGER_CORE_HPP
-#define MANAGER_CORE_HPP
+#ifndef HELLO_CONTACT_CORE_HPP
+#define HELLO_CONTACT_CORE_HPP
 
 #include <algorithm>
 #include <cstdint>
@@ -13,12 +13,13 @@
 #include <string_view>
 #include <vector>
 
-#include <QFile>
-#include <QTextStream>
-
 // ==========================================
 // 1. 日期结构体
 // ==========================================
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 struct Date {
     int year;
     int month;
@@ -258,7 +259,23 @@ class AddressBookManager {
     // ========== 排序 ==========
     void sortByName() {
         std::sort(contacts.begin(), contacts.end(),
-                  [](const auto &a, const auto &b) { return a->getName() < b->getName(); });
+                  [](const auto &a, const auto &b) {
+#ifdef _WIN32
+                      // 用 Windows 系统语言排序（中文按拼音）
+                      auto toWide = [](const std::string &s) -> std::wstring {
+                          int len = MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, nullptr, 0);
+                          std::wstring w(len, L'\0');
+                          MultiByteToWideChar(CP_UTF8, 0, s.c_str(), -1, &w[0], len);
+                          return w;
+                      };
+                      std::wstring wa = toWide(a->getName());
+                      std::wstring wb = toWide(b->getName());
+                      return CompareStringW(LOCALE_USER_DEFAULT, 0,
+                                            wa.c_str(), -1, wb.c_str(), -1) == CSTR_LESS_THAN;
+#else
+            return a->getName() < b->getName();
+#endif
+                  });
         std::cout << "==> 已按姓名（拼音/英文）排序完成。" << std::endl;
     }
 
@@ -347,45 +364,51 @@ class AddressBookManager {
 
     // ========== 生日检查与祝福邮件 ==========
     std::string generateBirthdayEmail(std::string_view receiverName,
-                                      std::string_view myName) const {
-        QString fn = QStringLiteral("BirthdayEmail_%1.txt")
-                         .arg(QString::fromUtf8(receiverName.data(),
-                                                static_cast<int>(receiverName.size())));
-        std::string filename = fn.toUtf8().toStdString();
+                                      std::string_view myName,
+                                      std::string_view saveDir = ".") const {
+        std::string filename;
+        if (saveDir != "." && !saveDir.empty()) {
+            filename = std::string(saveDir) + "/";
+        }
+        filename += "BirthdayEmail_";
+        filename += receiverName;
+        filename += ".txt";
 
-        QFile file(fn);
-        if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&file);
-            out.setEncoding(QStringConverter::Utf8);
-            out << QString::fromUtf8(receiverName.data(),
-                                     static_cast<int>(receiverName.size()))
-                << ":\n";
-            out << "\t祝生日快乐，健康幸福。\n";
-            out << "\t\t\t\t\t\t"
-                << QString::fromUtf8(myName.data(),
-                                     static_cast<int>(myName.size()))
-                << "\n";
-            file.close();
+#ifdef _WIN32
+        int wlen = MultiByteToWideChar(CP_UTF8, 0, filename.c_str(), -1, nullptr, 0);
+        std::wstring wfilename(wlen, L'\0');
+        MultiByteToWideChar(CP_UTF8, 0, filename.c_str(), -1, &wfilename[0], wlen);
+        std::ofstream out(wfilename.c_str());
+#else
+        std::ofstream out(filename);
+#endif
+        if (out.is_open()) {
+            out << receiverName << ":\n";
+            out << "	" << "祝生日快乐，健康幸福。" << "\n";
+            out << "						" << myName << "\n";
+            out.close();
 
             std::cout << "已为 " << receiverName << " 生成祝福邮件: " << filename << std::endl;
             std::cout << "── 邮件内容 ──" << std::endl;
 
-            QFile infile(fn);
-            if (infile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                QTextStream in(&infile);
-                in.setEncoding(QStringConverter::Utf8);
-                while (!in.atEnd())
-                    std::cout << in.readLine().toStdString() << std::endl;
-                infile.close();
-            }
+#ifdef _WIN32
+            std::ifstream infile(wfilename.c_str());
+#else
+            std::ifstream infile(filename);
+#endif
+            std::string line;
+            while (std::getline(infile, line))
+                std::cout << line << std::endl;
+            infile.close();
+
             std::cout << "──────────────" << std::endl;
         } else {
             std::cout << "!! 生成祝福邮件失败：无法写入文件 " << filename << std::endl;
         }
         return filename;
     }
-
-    void checkBirthdaysAndSendEmails(std::string_view myName) const {
+    void checkBirthdaysAndSendEmails(std::string_view myName,
+                                     std::string_view saveDir = ".") const {
         bool foundAny = false;
         std::cout << "==> 正在扫描未来 5 天内过生日的联系人..." << std::endl;
         for (const auto &p : contacts) {
@@ -395,7 +418,7 @@ class AddressBookManager {
                 std::cout << p->getBirthDate().month << "月" << p->getBirthDate().day << "日";
                 std::cout << "（" << weekdayStr << "）";
                 p->display();
-                generateBirthdayEmail(p->getName(), myName);
+                generateBirthdayEmail(p->getName(), myName, saveDir);
             }
         }
         if (!foundAny)

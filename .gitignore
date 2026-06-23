@@ -1,1 +1,69 @@
+# ── HelloContact .gitignore ──
+
+# 构建输出
 build/
+cmake-build-*/
+
+# 可执行文件
+*.exe
+*.exe~
+*.dll
+*.lib
+*.so
+*.dylib
+*.a
+
+# 编译中间文件
+*.o
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.iobj
+*.ipdb
+# MOC 自动生成
+moc_*.cpp
+moc_*.h
+*_autogen/
+*_autogen/
+# .qm 文件（Qt 翻译）
+
+# 编辑器
+.vs/
+*.user
+*.suo
+.idea/
+*.swp
+*.swo
+*~
+
+# CMake 缓存
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+compile_commands.json
+Makefile
+Makefile.inc
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+.venv/
+venv/
+
+# Node
+node_modules/
+package-lock.json
+
+# 运行时数据（不跟踪示例数据，只跟踪 data/ 目录下的模板）
+# data/*.txt
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 构建脚本临时文件
+*.tmp
